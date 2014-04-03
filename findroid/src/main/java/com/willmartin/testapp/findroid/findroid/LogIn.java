@@ -1,16 +1,20 @@
 package com.willmartin.testapp.findroid.findroid;
 
+import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
@@ -18,7 +22,7 @@ import java.util.Vector;
 
 public class LogIn extends ActionBarActivity {
 
-
+    String PASSWORD = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +39,7 @@ public class LogIn extends ActionBarActivity {
         protected Void doInBackground(Void... voids) {
 
             JSch jsch = new JSch();
-            String username = "martinw";
+            String username = "jonesn";
             String host = "skittles.mathcs.carleton.edu";
             int port = 22;
 
@@ -55,7 +59,10 @@ public class LogIn extends ActionBarActivity {
                     ChannelSftp.LsEntry actualResult = (ChannelSftp.LsEntry) result;
                     System.out.println(actualResult.getLongname());
 
-                    Log.v("MYAPP2", actualResult.getLongname());
+//                    Log.v("MYAPP2", actualResult.getLongname());
+                    SftpATTRS attrs = actualResult.getAttrs();
+                    Log.v("MYAPP2", attrs.toString());
+
                 }
                 c.exit();
                 session.disconnect();
@@ -133,5 +140,13 @@ public class LogIn extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    String PASSWORD = "";
+
+    public void launchSession(View view) {
+        Intent intent = new Intent(this, BrowseActivity.class);
+        String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
+        String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
+        String passwordText = ((EditText) findViewById(R.id.password)).getText().toString();
+
+        startActivity(intent);
+    }
 }
