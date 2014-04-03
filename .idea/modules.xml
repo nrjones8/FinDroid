@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/FinDroid.iml" filepath="$PROJECT_DIR$/FinDroid.iml" />
+      <module fileurl="file://$PROJECT_DIR$/findroid/findroid.iml" filepath="$PROJECT_DIR$/findroid/findroid.iml" />
+    </modules>
+  </component>
+</project>
+
