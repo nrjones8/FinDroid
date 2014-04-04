@@ -3,7 +3,6 @@ package com.willmartin.testapp.findroid.findroid;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
@@ -40,9 +39,16 @@ public class FileSystemModel {
     }
 
 
-    public void cd(String absPath) throws SftpException{
-        this.sftpChannel.cd(absPath);
+    public Vector<ChannelSftp.LsEntry> ls(String absPath) throws SftpException {
         this.currentLocation = absPath;
+
+        Vector<ChannelSftp.LsEntry> items = this.sftpChannel.ls(absPath);
+        return items;
+    }
+
+    public void shutdownConnection() {
+        this.sftpChannel.disconnect();
+        this.session.disconnect();
     }
 
 

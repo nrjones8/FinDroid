@@ -12,14 +12,21 @@ public class BrowseActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
 
         Intent intent = getIntent();
+
+        // In case we fail and need to go back
+        final Intent backIntent = new Intent(this, LogIn.class);
         final String hostname = intent.getStringExtra(LogIn.HOSTNAME_EXTRA);
         final String username = intent.getStringExtra(LogIn.USERNAME_EXTRA);
         final String password = intent.getStringExtra(LogIn.PASSWORD_EXTRA);
 
+
+        // Attempt to create a new FileSystemModel, which initiates the SSH connection
+        // asynchronously
         AsyncTask<Void, Void, FileSystemModel> task = new AsyncTask<Void, Void, FileSystemModel>() {
             @Override
             protected FileSystemModel doInBackground(Void... voids) {
@@ -35,10 +42,11 @@ public class BrowseActivity extends ActionBarActivity {
                 if (model != null){
                     Log.v("MYAPP", "Connected!");
                 } else {
-                    Log.v("MYAPP", "Not connectioned :(");
+                    startActivity(backIntent);
                 }
             }
         };
+        task.execute();
     }
 
 
