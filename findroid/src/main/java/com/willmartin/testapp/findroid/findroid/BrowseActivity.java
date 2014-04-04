@@ -7,14 +7,27 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Adapter;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
+
+import java.util.List;
 
 public class BrowseActivity extends ActionBarActivity {
+
+    private FileSystemModel model;
+    private BrowseListAdapter listAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
+
 
         Intent intent = getIntent();
 
@@ -32,6 +45,7 @@ public class BrowseActivity extends ActionBarActivity {
             protected FileSystemModel doInBackground(Void... voids) {
                 try {
                     FileSystemModel model = new FileSystemModel(hostname, 22, username, password);
+                    setModel(model);
                     return model;
                 } catch (Exception e){
                     return null;
@@ -41,6 +55,7 @@ public class BrowseActivity extends ActionBarActivity {
             protected void onPostExecute(FileSystemModel model){
                 if (model != null){
                     Log.v("MYAPP", "Connected!");
+                    createViews();
                 } else {
                     startActivity(backIntent);
                 }
@@ -49,6 +64,55 @@ public class BrowseActivity extends ActionBarActivity {
         task.execute();
     }
 
+    private void createViews(){
+
+        try {
+
+            listAdapter = new BrowseListAdapter(this, Adapter.IGNORE_ITEM_VIEW_TYPE, model.ls());
+
+            ListView listView = (ListView)this.findViewById(R.id.browseListView);
+            listView.setAdapter(listAdapter);
+
+        } catch (SftpException e) {
+            //do something!
+        }
+    }
+
+    private void setModel(FileSystemModel model){
+        this.model = model;
+    }
+
+    public void changeDir(View view){
+
+
+        final String newDir = model.getCurrentLocation() + "/" + ((TextView) view.findViewById(R.id.filenameTextView)).getText().toString();
+
+        Log.v("MYAPP", newDir);
+
+        AsyncTask<Void, Void, List<ChannelSftp.LsEntry>> task = new AsyncTask<Void, Void, List<ChannelSftp.LsEntry>>() {
+            @Override
+            protected List<ChannelSftp.LsEntry> doInBackground(Void... voids) {
+                try {
+                    return model.ls(newDir);
+                } catch (SftpException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+            @Override
+            protected void onPostExecute(List<ChannelSftp.LsEntry> lsEntries){
+
+                if (lsEntries != null){
+                    Log.v("MYAPP", "ls-ed!");
+                    listAdapter.clear();
+                    listAdapter.addAll(lsEntries);
+                } else {
+                    //TODO TOAST
+                }
+            }
+        };
+        task.execute();
+    }
 
 
     @Override

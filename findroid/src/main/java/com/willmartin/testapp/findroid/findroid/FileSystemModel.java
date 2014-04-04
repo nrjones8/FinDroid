@@ -37,13 +37,18 @@ public class FileSystemModel {
         this.sftpChannel.connect();
         this.currentLocation = this.sftpChannel.pwd();
     }
-
+    public String getCurrentLocation(){
+        return currentLocation;
+    }
 
     public Vector<ChannelSftp.LsEntry> ls(String absPath) throws SftpException {
         this.currentLocation = absPath;
 
         Vector<ChannelSftp.LsEntry> items = this.sftpChannel.ls(absPath);
         return items;
+    }
+    public Vector<ChannelSftp.LsEntry> ls() throws SftpException {
+        return this.ls(this.currentLocation);
     }
 
     public void shutdownConnection() {

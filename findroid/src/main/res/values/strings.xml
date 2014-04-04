@@ -9,5 +9,6 @@
     <string name="password_hint">Password</string>
     <string name="connect_button">Connect!</string>
     <string name="title_activity_browse">BrowseActivity</string>
+    <string name="DownloadButtonText">Download</string>
 
 </resources>
