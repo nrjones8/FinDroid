@@ -46,7 +46,7 @@ public class LogIn extends ActionBarActivity {
     }
 
     public void launchSession(View view) {
-        
+
         String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
         String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
         String passwordText = ((EditText) findViewById(R.id.password)).getText().toString();
