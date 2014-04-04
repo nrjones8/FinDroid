@@ -1,7 +1,6 @@
 package com.willmartin.testapp.findroid.findroid;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -10,19 +9,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelSftp;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
-import com.jcraft.jsch.UIKeyboardInteractive;
-import com.jcraft.jsch.UserInfo;
-
-import java.util.Vector;
-
 public class LogIn extends ActionBarActivity {
 
-
+    public final static String HOSTNAME_EXTRA = "com.willmartin.testapp.findroid.hostname_extra";
+    public final static String USERNAME_EXTRA = "com.willmartin.testapp.findroid.username_extra";
+    public final static String PASSWORD_EXTRA = "com.willmartin.testapp.findroid.passwrod_extra";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,11 +46,15 @@ public class LogIn extends ActionBarActivity {
     }
 
     public void launchSession(View view) {
-        Intent intent = new Intent(this, BrowseActivity.class);
+        
         String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
         String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
         String passwordText = ((EditText) findViewById(R.id.password)).getText().toString();
 
+        Intent intent = new Intent(this, BrowseActivity.class);
+        intent.putExtra(HOSTNAME_EXTRA, hostText);
+        intent.putExtra(USERNAME_EXTRA, usernameText);
+        intent.putExtra(PASSWORD_EXTRA, passwordText);
         startActivity(intent);
     }
 }

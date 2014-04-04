@@ -1,7 +1,10 @@
 package com.willmartin.testapp.findroid.findroid;
 
-import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -11,7 +14,33 @@ public class BrowseActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
+
+        Intent intent = getIntent();
+        final String hostname = intent.getStringExtra(LogIn.HOSTNAME_EXTRA);
+        final String username = intent.getStringExtra(LogIn.USERNAME_EXTRA);
+        final String password = intent.getStringExtra(LogIn.PASSWORD_EXTRA);
+
+        AsyncTask<Void, Void, FileSystemModel> task = new AsyncTask<Void, Void, FileSystemModel>() {
+            @Override
+            protected FileSystemModel doInBackground(Void... voids) {
+                try {
+                    FileSystemModel model = new FileSystemModel(hostname, 22, username, password);
+                    return model;
+                } catch (Exception e){
+                    return null;
+                }
+            }
+            @Override
+            protected void onPostExecute(FileSystemModel model){
+                if (model != null){
+                    Log.v("MYAPP", "Connected!");
+                } else {
+                    Log.v("MYAPP", "Not connectioned :(");
+                }
+            }
+        };
     }
+
 
 
     @Override
