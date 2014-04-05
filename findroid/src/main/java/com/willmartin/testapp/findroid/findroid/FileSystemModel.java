@@ -12,6 +12,10 @@ import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Vector;
 
 /**
@@ -49,6 +53,10 @@ public class FileSystemModel {
     }
     public Vector<ChannelSftp.LsEntry> ls() throws SftpException {
         return this.ls(this.currentLocation);
+    }
+
+    public InputStream get(String filePath) throws SftpException {
+        return this.sftpChannel.get(filePath);
     }
 
     public void shutdownConnection() {

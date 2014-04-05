@@ -3,6 +3,7 @@ package com.willmartin.testapp.findroid.findroid;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -15,6 +16,11 @@ import android.widget.TextView;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public class BrowseActivity extends ActionBarActivity {
@@ -109,6 +115,58 @@ public class BrowseActivity extends ActionBarActivity {
                 } else {
                     //TODO TOAST
                 }
+            }
+        };
+        task.execute();
+    }
+
+    public void getFile(View view) {
+        TextView labelView = (TextView) ((View) view.getParent()).findViewById(R.id.filenameTextView);
+        final String filename = labelView.getText().toString();
+        final String filePath = model.getCurrentLocation() + "/" + filename;
+
+        Log.v("DOWNLOADS", "Filename: "+filePath);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                Log.v("DOWNLOADS", "In background test");
+                InputStream downloadStream = null;
+                OutputStream outStream = null;
+                // Our good friend: http://www.mkyong.com/java/how-to-convert-inputstream-to-file-in-java/
+                try {
+                    downloadStream = model.get(filePath);
+                    outStream = new FileOutputStream(new File(Environment.getExternalStoragePublicDirectory(
+                            Environment.DIRECTORY_DOWNLOADS), filename));
+
+                    int read = 0;
+                        byte[] bytes = new byte[1024];
+                    while ((read = downloadStream.read(bytes)) != -1) {
+                        outStream.write(bytes, 0, read);
+                    }
+                } catch (SftpException e) {
+                    Log.v("DOWNLOADS", "SFTP Exception");
+                    //TODO: toast?
+                } catch (IOException e) {
+                    Log.v("DOWNLOADS", "IO Exception");
+                    //TODO: More toast?
+                } finally {
+                    if(downloadStream != null) {
+                        try {
+                            downloadStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if(outStream != null) {
+                        try {
+                            outStream.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+
+                return null;
             }
         };
         task.execute();
