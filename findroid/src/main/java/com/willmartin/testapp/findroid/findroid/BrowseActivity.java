@@ -39,6 +39,7 @@ public class BrowseActivity extends ActionBarActivity {
 
         // In case we fail and need to go back
         final Intent backIntent = new Intent(this, LogIn.class);
+
         final String hostname = intent.getStringExtra(LogIn.HOSTNAME_EXTRA);
         final String username = intent.getStringExtra(LogIn.USERNAME_EXTRA);
         final String password = intent.getStringExtra(LogIn.PASSWORD_EXTRA);
@@ -59,7 +60,7 @@ public class BrowseActivity extends ActionBarActivity {
             }
             @Override
             protected void onPostExecute(FileSystemModel model){
-                if (model != null){
+                if (model != null) {
                     Log.v("MYAPP", "Connected!");
                     createViews();
                 } else {
@@ -88,12 +89,15 @@ public class BrowseActivity extends ActionBarActivity {
         this.model = model;
     }
 
-    public void changeDir(View view){
+    public void changeDir(View view) {
+        // What the user actually clicked
+        String relativeDir = ((TextView) view.findViewById(R.id.filenameTextView)).getText().toString();
+        File combinedPath = new File(model.getCurrentLocation(), relativeDir);
+        final String newDir = combinedPath.getPath();
 
-
-        final String newDir = model.getCurrentLocation() + "/" + ((TextView) view.findViewById(R.id.filenameTextView)).getText().toString();
-
-        Log.v("MYAPP", newDir);
+        // Set the header text to be the new directory
+        TextView header = (TextView) this.findViewById(R.id.header_text);
+        header.setText(newDir);
 
         AsyncTask<Void, Void, List<ChannelSftp.LsEntry>> task = new AsyncTask<Void, Void, List<ChannelSftp.LsEntry>>() {
             @Override

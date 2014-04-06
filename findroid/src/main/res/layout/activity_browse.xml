@@ -7,6 +7,14 @@
     tools:context="com.willmartin.testapp.findroid.findroid.LogIn">
 
 
+    <TextView android:id="@+id/header_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#FC0"
+        android:gravity="center"
+        android:text="foo" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
