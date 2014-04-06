@@ -30,10 +30,9 @@ public class BrowseActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        // Only called from the LogIn Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_browse);
-
 
         Intent intent = getIntent();
 
@@ -43,7 +42,6 @@ public class BrowseActivity extends ActionBarActivity {
         final String hostname = intent.getStringExtra(LogIn.HOSTNAME_EXTRA);
         final String username = intent.getStringExtra(LogIn.USERNAME_EXTRA);
         final String password = intent.getStringExtra(LogIn.PASSWORD_EXTRA);
-
 
         // Attempt to create a new FileSystemModel, which initiates the SSH connection
         // asynchronously
@@ -63,6 +61,8 @@ public class BrowseActivity extends ActionBarActivity {
                 if (model != null) {
                     Log.v("MYAPP", "Connected!");
                     createViews();
+                    TextView header = (TextView) findViewById(R.id.header_text);
+                    header.setText(model.getCurrentLocation());
                 } else {
                     startActivity(backIntent);
                 }
@@ -71,13 +71,53 @@ public class BrowseActivity extends ActionBarActivity {
         task.execute();
     }
 
-    private void createViews(){
+    protected void onStop() {
+        super.onStop();
+        Log.v("MYAPP", "onSTOP");
+        if (this.model != null){
+            this.model.shutdownConnection();
+        }
+    }
 
+    protected void onRestart() {
+        super.onRestart();
+        // For access inside the AsyncTask
+        //final FileSystemModel model = this.model;
+        // In case we fail and need to go back
+        final Intent backIntent = new Intent(this, LogIn.class);
+        Log.v("MYAPP", "onRESTART");
+
+        // Establish connection based on previous user info, otherwise send back to
+        // log in screen
+        AsyncTask<Void, Void, FileSystemModel> task = new AsyncTask<Void, Void, FileSystemModel>() {
+            @Override
+            protected FileSystemModel doInBackground(Void... voids) {
+                try {
+                    model.connect();
+                    return model;
+                } catch (Exception e){
+                    return null;
+                }
+            }
+            @Override
+            protected void onPostExecute(FileSystemModel model){
+                if (model != null) {
+                    Log.v("MYAPP", "Connected!");
+                    createViews();
+                } else {
+                    startActivity(backIntent);
+                }
+            }
+        };
+        task.execute();
+
+    }
+
+    private void createViews() {
         try {
-
             listAdapter = new BrowseListAdapter(this, Adapter.IGNORE_ITEM_VIEW_TYPE, model.ls());
 
-            ListView listView = (ListView)this.findViewById(R.id.browseListView);
+            ListView listView = (ListView) this.findViewById(R.id.browseListView);
             listView.setAdapter(listAdapter);
 
         } catch (SftpException e) {
@@ -175,7 +215,6 @@ public class BrowseActivity extends ActionBarActivity {
         };
         task.execute();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

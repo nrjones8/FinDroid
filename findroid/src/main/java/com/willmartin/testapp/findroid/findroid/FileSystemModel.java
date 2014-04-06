@@ -16,6 +16,10 @@ import java.util.Vector;
  */
 public class FileSystemModel {
 
+    private String host;
+    private int port;
+    private String username;
+    private String password;
 
     private Session session;
     private ChannelSftp sftpChannel;
@@ -23,21 +27,38 @@ public class FileSystemModel {
 
     public FileSystemModel(String host, int port, String username, String password)
             throws JSchException, SftpException {
+        this.host = host;
+        this.port = port;
+        this.username = username;
+        this.password = password;
+        this.connect();
+    }
+
+    /*
+     * Initializes sftpchannel, connection, and session
+     * Called when first creating the model, or when reconnecting onRestart()
+     */
+    public void connect() throws JSchException, SftpException {
         JSch jsch = new JSch();
-        this.session = jsch.getSession(username, host, port);
-        this.session.setPassword(password);
+        this.session = jsch.getSession(this.username, this.host, this.port);
+        this.session.setPassword(this.password);
         UserInfo ui = new DummyUserInfo();
         this.session.setUserInfo(ui);
 
         this.session.connect();
         this.sftpChannel = (ChannelSftp) this.session.openChannel("sftp");
         this.sftpChannel.connect();
-        this.currentLocation = this.sftpChannel.pwd();
+
+        if(this.currentLocation == null) {
+            this.currentLocation = this.sftpChannel.pwd();
+        }
     }
     public String getCurrentLocation(){
         return currentLocation;
     }
-
+    public String getUsername() {return username; }
+    public String getHost() {return host;}
+    public int getPort(){return port;}
     /*
      * Returns Vector of Entry objects stored in <absPath>
      */

@@ -11,4 +11,7 @@
     <string name="title_activity_browse">BrowseActivity</string>
     <string name="DownloadButtonText">Download</string>
 
+    <string name="prefs_hostname_key">prefs_hostname_key</string>
+    <string name="prefs_username_key">prefs_username_key</string>
+
 </resources>

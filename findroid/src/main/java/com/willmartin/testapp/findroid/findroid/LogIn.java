@@ -1,6 +1,8 @@
 package com.willmartin.testapp.findroid.findroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -21,6 +23,17 @@ public class LogIn extends ActionBarActivity {
         Log.v("MYAPP2", "STARTING APP");
         System.out.println("Starting!");
         setContentView(R.layout.activity_log_in);
+
+
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        String savedUsername = sharedPref.getString(getString(R.string.prefs_username_key), null);
+        if (savedUsername != null){
+            ((EditText) findViewById(R.id.username)).setText(savedUsername);
+        }
+        String savedHostname = sharedPref.getString(getString(R.string.prefs_hostname_key), null);
+        if (savedHostname != null){
+            ((EditText) findViewById(R.id.host)).setText(savedHostname);
+        }
     }
 
 
@@ -45,6 +58,33 @@ public class LogIn extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+        super.onSaveInstanceState(outState);
+        Log.v("MYAPP", "In onSaveInstanceState");
+        if (outState != null){
+            Log.v("MYAPP", "Saving state!");
+            String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
+            String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
+
+            outState.putString("username", usernameText);
+            outState.putString("hostname", hostText);
+        }
+    }
+
+    private void savePrefs(){
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
+        String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
+
+        editor.putString(getString(R.string.prefs_hostname_key), hostText);
+        editor.putString(getString(R.string.prefs_username_key), usernameText);
+
+        editor.commit();
+    }
+
     public void launchSession(View view) {
 
         String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
@@ -55,6 +95,9 @@ public class LogIn extends ActionBarActivity {
         intent.putExtra(HOSTNAME_EXTRA, hostText);
         intent.putExtra(USERNAME_EXTRA, usernameText);
         intent.putExtra(PASSWORD_EXTRA, passwordText);
+
+        savePrefs();
+
         startActivity(intent);
     }
 }
