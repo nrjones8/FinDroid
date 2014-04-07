@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.security.auth.login.LoginException;
+
 public class BrowseActivity extends ActionBarActivity {
 
     private FileSystemModel model;
@@ -36,9 +38,6 @@ public class BrowseActivity extends ActionBarActivity {
         setContentView(R.layout.activity_browse);
 
         Intent intent = getIntent();
-
-        // In case we fail and need to go back
-        final Intent backIntent = new Intent(this, LogIn.class);
 
         final String hostname = intent.getStringExtra(LogIn.HOSTNAME_EXTRA);
         final String username = intent.getStringExtra(LogIn.USERNAME_EXTRA);
@@ -65,13 +64,21 @@ public class BrowseActivity extends ActionBarActivity {
                     TextView header = (TextView) findViewById(R.id.header_text);
                     header.setText(model.getCurrentLocation());
                 } else {
-                    startActivity(backIntent);
+                    finish(true);
                 }
             }
         };
         task.execute();
     }
 
+    private void finish(boolean exitWithError) {
+        if (exitWithError) {
+            setResult(LogIn.BROWSE_ERROR);
+        }
+        finish();
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         Log.v("MYAPP", "onSTOP");
@@ -80,12 +87,9 @@ public class BrowseActivity extends ActionBarActivity {
         }
     }
 
+    @Override
     protected void onRestart() {
         super.onRestart();
-        // For access inside the AsyncTask
-        //final FileSystemModel model = this.model;
-        // In case we fail and need to go back
-        final Intent backIntent = new Intent(this, LogIn.class);
         Log.v("MYAPP", "onRESTART");
 
         // Establish connection based on previous user info, otherwise send back to
@@ -106,7 +110,9 @@ public class BrowseActivity extends ActionBarActivity {
                     Log.v("MYAPP", "Connected!");
                     createViews();
                 } else {
-                    startActivity(backIntent);
+                    Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
+                            Toast.LENGTH_LONG).show();
+                    finish(true);
                 }
             }
         };
@@ -131,6 +137,7 @@ public class BrowseActivity extends ActionBarActivity {
     }
 
     public void changeDir(View view) {
+
         // What the user actually clicked
         String relativeDir = ((TextView) view.findViewById(R.id.filenameTextView)).getText().toString();
         File combinedPath = new File(model.getCurrentLocation(), relativeDir);

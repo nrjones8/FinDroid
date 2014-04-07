@@ -10,12 +10,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class LogIn extends ActionBarActivity {
 
     public final static String HOSTNAME_EXTRA = "com.willmartin.testapp.findroid.hostname_extra";
     public final static String USERNAME_EXTRA = "com.willmartin.testapp.findroid.username_extra";
     public final static String PASSWORD_EXTRA = "com.willmartin.testapp.findroid.passwrod_extra";
+    public final static String BROWSE_ERROR_EXTRA = "com.willmartin.testapp.findroid.from_browse_extra";
+    public final static int BROWSE_REQUEST = 65432;
+    public final static int BROWSE_ERROR = 999999;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,18 @@ public class LogIn extends ActionBarActivity {
         }
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
 
+        Log.v("WILLTEST","In on restart");
+        Intent intent = getIntent();
+        boolean isError = intent.getBooleanExtra(BROWSE_ERROR_EXTRA, false);
+        if (isError) {
+            Toast.makeText(getApplicationContext(), "Connection Error: please re-log in",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -98,6 +113,15 @@ public class LogIn extends ActionBarActivity {
 
         savePrefs();
 
-        startActivity(intent);
+        startActivityForResult(intent, BROWSE_REQUEST);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        Log.v("WILLTEST", "ON ACTIVITY RESULT!");
+        if (requestCode == BROWSE_REQUEST && resultCode == BROWSE_ERROR) {
+            Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
+                Toast.LENGTH_SHORT).show();
+        }
     }
 }
