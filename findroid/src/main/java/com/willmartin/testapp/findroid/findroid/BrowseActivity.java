@@ -117,7 +117,6 @@ public class BrowseActivity extends ActionBarActivity {
             }
         };
         task.execute();
-
     }
 
     private void createViews() {
@@ -136,13 +135,24 @@ public class BrowseActivity extends ActionBarActivity {
         this.model = model;
     }
 
-    public void changeDir(View view) {
-
-        // What the user actually clicked
+    /*
+     * Parses out the user's selection and create a new path by combining current location
+     * with user's selection.
+     */
+    public void handleDirChange(View view) {
         String relativeDir = ((TextView) view.findViewById(R.id.filenameTextView)).getText().toString();
         File combinedPath = new File(model.getCurrentLocation(), relativeDir);
         final String newDir = combinedPath.getPath();
 
+        this.changeDir(newDir);
+    }
+
+    /*
+     * Sets the directory to be <newDir>
+     */
+    private void changeDir(String newDir) {
+        // Workaround to access <newDir> in AsyncTask
+        final String finalNewDir = newDir;
         // Set the header text to be the new directory
         TextView header = (TextView) this.findViewById(R.id.header_text);
         header.setText(newDir);
@@ -151,7 +161,7 @@ public class BrowseActivity extends ActionBarActivity {
             @Override
             protected List<ChannelSftp.LsEntry> doInBackground(Void... voids) {
                 try {
-                    return model.ls(newDir);
+                    return model.ls(finalNewDir);
                 } catch (SftpException e) {
                     e.printStackTrace();
                 }
@@ -254,9 +264,17 @@ public class BrowseActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         if (id == R.id.action_settings) {
             return true;
+        } else if(id == android.R.id.home) {
+            // Back button sends user up one directory
+            File currentLocationFile= new File(model.getCurrentLocation());
+            String parentDir = currentLocationFile.getParent();
+            this.changeDir(parentDir);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 

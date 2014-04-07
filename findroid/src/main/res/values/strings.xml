@@ -8,7 +8,7 @@
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
     <string name="connect_button">Connect!</string>
-    <string name="title_activity_browse">BrowseActivity</string>
+    <string name="browse_up_one_dir">Parent Directory</string>
     <string name="DownloadButtonText">Download</string>
 
     <string name="prefs_hostname_key">prefs_hostname_key</string>

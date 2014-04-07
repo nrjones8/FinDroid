@@ -8,7 +8,7 @@
     android:layout_height="wrap_content"
     tools:context="com.willmartin.testapp.findroid.findroid.BrowseActivity"
     android:clickable="true"
-    android:onClick="changeDir">
+    android:onClick="handleDirChange">
 
     <ImageView
         android:layout_width="wrap_content"

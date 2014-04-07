@@ -21,7 +21,7 @@
         </activity>
         <activity
             android:name="com.willmartin.testapp.findroid.findroid.BrowseActivity"
-            android:label="@string/title_activity_browse" >
+            android:label="@string/browse_up_one_dir" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.willmartin.testapp.findroid.findroid.LogIn"
