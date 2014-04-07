@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.SftpException;
@@ -157,7 +158,8 @@ public class BrowseActivity extends ActionBarActivity {
                     listAdapter.clear();
                     listAdapter.addAll(lsEntries);
                 } else {
-                    //TODO TOAST
+                    Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
+                            Toast.LENGTH_SHORT).show();
                 }
             }
         };
@@ -165,9 +167,13 @@ public class BrowseActivity extends ActionBarActivity {
     }
 
     public void getFile(View view) {
+        // Grab the enclosing list item so that we can navigate to the text field.
         TextView labelView = (TextView) ((View) view.getParent()).findViewById(R.id.filenameTextView);
         final String filename = labelView.getText().toString();
         final String filePath = model.getCurrentLocation() + "/" + filename;
+
+        Toast.makeText(getApplicationContext(), "Downloading File...",
+                Toast.LENGTH_SHORT).show();
 
         Log.v("DOWNLOADS", "Filename: "+filePath);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
@@ -189,10 +195,12 @@ public class BrowseActivity extends ActionBarActivity {
                     }
                 } catch (SftpException e) {
                     Log.v("DOWNLOADS", "SFTP Exception");
-                    //TODO: toast?
+                    Toast.makeText(getApplicationContext(), "Download Error, try again",
+                            Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     Log.v("DOWNLOADS", "IO Exception");
-                    //TODO: More toast?
+                    Toast.makeText(getApplicationContext(), "Download Error, try again",
+                            Toast.LENGTH_SHORT).show();
                 } finally {
                     if(downloadStream != null) {
                         try {
@@ -212,6 +220,15 @@ public class BrowseActivity extends ActionBarActivity {
 
                 return null;
             }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                Toast.makeText(getApplicationContext(), "Successfully saved to downloads",
+                        Toast.LENGTH_SHORT).show();
+                Log.v("TOAST TEST", "In, on post execute");
+            }
+
         };
         task.execute();
     }
