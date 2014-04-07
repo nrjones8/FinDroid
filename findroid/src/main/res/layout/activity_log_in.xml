@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="64dp"
-    android:paddingRight="64dp"
+    android:paddingLeft="50dp"
+    android:paddingRight="50dp"
     android:paddingTop="64dp"
     android:paddingBottom="16dp"
     android:orientation="vertical"
@@ -11,20 +11,57 @@
     tools:context="com.willmartin.testapp.findroid.findroid.LogIn">
 
 
+    <!-- Host field -->
+    <TextView android:id="@+id/host_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal"
+        android:paddingBottom="6dp"
+        android:text="@string/host_hint"
+         />
+
     <EditText android:id="@+id/host"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/host_hint"
+        android:inputType="textEmailAddress"
+        android:paddingBottom="6dp"
+        android:background="@drawable/input_box"
         />
+
+
+    <!-- Username field -->
+    <TextView android:id="@+id/username_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal"
+        android:paddingTop="6dp"
+        android:text="@string/username_hint"
+        />
+
     <EditText android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/username_hint"
+        android:paddingBottom="6dp"
+        android:background="@drawable/input_box"
         />
+
+    <!-- Password field -->
+    <TextView android:id="@+id/username_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:gravity="center_horizontal"
+        android:paddingTop="6dp"
+        android:text="@string/password_hint"
+        />
+
     <EditText android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/password_hint"
+        android:background="@drawable/input_box"
+        android:paddingBottom="6dp"
         android:inputType="textPassword"
         />
 
