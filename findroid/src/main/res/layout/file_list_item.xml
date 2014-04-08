@@ -28,7 +28,7 @@
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/DownloadButtonText"
         android:id="@+id/downloadButtonView"
-        android:onClick="getFile"/>
+        android:onClick="getFile"
+        android:background="@drawable/ic_download" />
 </LinearLayout>

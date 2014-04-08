@@ -44,7 +44,6 @@ public class LogIn extends ActionBarActivity {
     protected void onRestart() {
         super.onRestart();
 
-        Log.v("WILLTEST","In on restart");
         Intent intent = getIntent();
         boolean isError = intent.getBooleanExtra(BROWSE_ERROR_EXTRA, false);
         if (isError) {
@@ -76,9 +75,8 @@ public class LogIn extends ActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
-        Log.v("MYAPP", "In onSaveInstanceState");
+
         if (outState != null){
-            Log.v("MYAPP", "Saving state!");
             String hostText = ((EditText) findViewById(R.id.host)).getText().toString();
             String usernameText = ((EditText) findViewById(R.id.username)).getText().toString();
 
@@ -118,7 +116,6 @@ public class LogIn extends ActionBarActivity {
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        Log.v("WILLTEST", "ON ACTIVITY RESULT!");
         if (requestCode == BROWSE_REQUEST && resultCode == BROWSE_ERROR) {
             Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
                 Toast.LENGTH_SHORT).show();

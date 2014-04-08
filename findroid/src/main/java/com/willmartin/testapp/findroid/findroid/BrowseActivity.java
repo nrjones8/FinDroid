@@ -24,8 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.security.auth.login.LoginException;
-
 public class BrowseActivity extends ActionBarActivity {
 
     private FileSystemModel model;
@@ -59,29 +57,25 @@ public class BrowseActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(FileSystemModel model){
                 if (model != null) {
-                    Log.v("MYAPP", "Connected!");
                     createViews();
                     TextView header = (TextView) findViewById(R.id.header_text);
                     header.setText(model.getCurrentLocation());
                 } else {
-                    finish(true);
+                    finishWithError();
                 }
             }
         };
         task.execute();
     }
 
-    private void finish(boolean exitWithError) {
-        if (exitWithError) {
-            setResult(LogIn.BROWSE_ERROR);
-        }
+    private void finishWithError() {
+        setResult(LogIn.BROWSE_ERROR);
         finish();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.v("MYAPP", "onSTOP");
         if (this.model != null){
             this.model.shutdownConnection();
         }
@@ -90,7 +84,6 @@ public class BrowseActivity extends ActionBarActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.v("MYAPP", "onRESTART");
 
         // Establish connection based on previous user info, otherwise send back to
         // log in screen
@@ -107,18 +100,18 @@ public class BrowseActivity extends ActionBarActivity {
             @Override
             protected void onPostExecute(FileSystemModel model){
                 if (model != null) {
-                    Log.v("MYAPP", "Connected!");
                     createViews();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
-                            Toast.LENGTH_LONG).show();
-                    finish(true);
+                    finishWithError();
                 }
             }
         };
         task.execute();
     }
 
+    /**
+     * Sets the list view to the items in the current directory.
+     */
     private void createViews() {
         try {
             listAdapter = new BrowseListAdapter(this, Adapter.IGNORE_ITEM_VIEW_TYPE, model.ls());
@@ -127,7 +120,7 @@ public class BrowseActivity extends ActionBarActivity {
             listView.setAdapter(listAdapter);
 
         } catch (SftpException e) {
-            //do something!
+            finishWithError();
         }
     }
 
@@ -171,12 +164,10 @@ public class BrowseActivity extends ActionBarActivity {
             protected void onPostExecute(List<ChannelSftp.LsEntry> lsEntries){
 
                 if (lsEntries != null){
-                    Log.v("MYAPP", "ls-ed!");
                     listAdapter.clear();
                     listAdapter.addAll(lsEntries);
                 } else {
-                    Toast.makeText(getApplicationContext(), "Connection Error, please log in again",
-                            Toast.LENGTH_SHORT).show();
+                    finishWithError();
                 }
             }
         };
@@ -192,11 +183,9 @@ public class BrowseActivity extends ActionBarActivity {
         Toast.makeText(getApplicationContext(), "Downloading File...",
                 Toast.LENGTH_SHORT).show();
 
-        Log.v("DOWNLOADS", "Filename: "+filePath);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
-                Log.v("DOWNLOADS", "In background test");
                 InputStream downloadStream = null;
                 OutputStream outStream = null;
                 // Our good friend: http://www.mkyong.com/java/how-to-convert-inputstream-to-file-in-java/
@@ -211,13 +200,11 @@ public class BrowseActivity extends ActionBarActivity {
                         outStream.write(bytes, 0, read);
                     }
                 } catch (SftpException e) {
-                    Log.v("DOWNLOADS", "SFTP Exception");
                     Toast.makeText(getApplicationContext(), "Download Error, try again",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 } catch (IOException e) {
-                    Log.v("DOWNLOADS", "IO Exception");
                     Toast.makeText(getApplicationContext(), "Download Error, try again",
-                            Toast.LENGTH_SHORT).show();
+                            Toast.LENGTH_LONG).show();
                 } finally {
                     if(downloadStream != null) {
                         try {
@@ -243,7 +230,6 @@ public class BrowseActivity extends ActionBarActivity {
                 super.onPostExecute(aVoid);
                 Toast.makeText(getApplicationContext(), "Successfully saved to downloads",
                         Toast.LENGTH_SHORT).show();
-                Log.v("TOAST TEST", "In, on post execute");
             }
 
         };
